@@ -1,0 +1,9 @@
+html, body {
+    margin: 50px;
+    padding: 50px;
+    box-sizing: border-box;
+}
+
+h1 {
+    color: red;
+}   
