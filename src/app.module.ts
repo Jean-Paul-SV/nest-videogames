@@ -4,16 +4,37 @@ import { join } from 'path';
 import { VideoGamesModule } from './videojuegos/videogames.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from './common/common.module';
+import { SeedModule } from './seed/seed.module';
+import { AdminModule } from './admin/admin.module';
+import { AuthModule } from './auth/auth.module';
+
+/**
+ * Módulo principal de la aplicación
+ * Configura y conecta todos los módulos de la aplicación
+ * 
+ * @property imports - Módulos que componen la aplicación:
+ * - ServeStaticModule: Para servir archivos estáticos
+ * - MongooseModule: Conexión a MongoDB
+ * - VideoGamesModule: Gestión de videojuegos
+ * - CommonModule: Funcionalidades comunes
+ * - SeedModule: Datos iniciales
+ * - AdminModule: Funciones administrativas
+ * - AuthModule: Autenticación y autorización
+ */
 @Module({
   imports: [
+    // Configuración para servir archivos estáticos desde la carpeta public
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    // Conexión a la base de datos MongoDB
     MongooseModule.forRoot('mongodb://localhost:27017/nest-videojuegos'),
-
+    // Módulos de la aplicación
     VideoGamesModule,
-
     CommonModule,
+    SeedModule,
+    AdminModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
