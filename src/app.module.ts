@@ -7,7 +7,9 @@ import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
-
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EnvConfiguration } from 'config/env.config';
+import { JoiValidationSchema } from 'config/joi.validation';
 /**
  * Módulo principal de la aplicación
  * Configura y conecta todos los módulos de la aplicación
@@ -23,12 +25,23 @@ import { AuthModule } from './auth/auth.module';
  */
 @Module({
   imports: [
+    ConfigModule.forRoot({  // Configuración de la aplicación
+      load: [EnvConfiguration],
+      validationSchema: JoiValidationSchema,
+    }),
     // Configuración para servir archivos estáticos desde la carpeta public
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
     // Conexión a la base de datos MongoDB
-    MongooseModule.forRoot('mongodb://localhost:27017/nest-videojuegos'),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB'),
+        dbName: 'videogamesdb',
+      }),
+    }),
     // Módulos de la aplicación
     VideoGamesModule,
     CommonModule,

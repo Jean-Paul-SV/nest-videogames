@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { VideoGameService } from './videogames.service';
 import { VideoGamesController } from './videogames.controller';
 import { Videogame, VideogameSchema } from './entities/videogame.entity';
+import { ConfigModule } from '@nestjs/config';
 
 /**
  * Módulo de Videojuegos
@@ -25,6 +26,7 @@ import { Videogame, VideogameSchema } from './entities/videogame.entity';
         schema: VideogameSchema,
       },
     ]),
+    ConfigModule,
   ],
   controllers: [VideoGamesController],
   providers: [VideoGameService],

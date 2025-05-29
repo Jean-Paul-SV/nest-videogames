@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { VideoGameService } from './videogames.service';
 import { CreateVideogameDto } from './dto/create-videogame.dto';
 import { UpdateVideogameDto } from './dto/update-videogame.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 /**
  * Controlador de Videojuegos
@@ -36,8 +37,8 @@ export class VideoGamesController {
    * GET /api/v2/videogames
    */
   @Get()
-  findAll() {
-    return this.videoGamesService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.videoGamesService.findAll(paginationDto);
   }
 
   /**

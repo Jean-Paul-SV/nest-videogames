@@ -4,7 +4,8 @@ import { Model } from 'mongoose';
 import { CreateVideogameDto } from './dto/create-videogame.dto';
 import { UpdateVideogameDto } from './dto/update-videogame.dto';
 import { Videogame } from './entities/videogame.entity';
-
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { ConfigService } from '@nestjs/config';
 /**
  * Servicio de Videojuegos
  * Maneja la lógica de negocio para las operaciones CRUD de videojuegos
@@ -15,7 +16,9 @@ export class VideoGameService {
   private readonly logger = new Logger(VideoGameService.name);
 
   constructor(
-    @InjectModel(Videogame.modelName) private videogameModel: Model<Videogame>
+    @InjectModel(Videogame.name)
+    private readonly videogameModel: Model<Videogame>,
+    private readonly configService: ConfigService
   ) {}
 
   /**
@@ -65,8 +68,15 @@ export class VideoGameService {
    * Obtiene todos los videojuegos
    * @returns Array de todos los videojuegos
    */
-  async findAll() {
-    return this.videogameModel.find();
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = this.configService.get<number>('DEFAULT_LIMIT') || 5, offset = 0 } = paginationDto;
+    return this.videogameModel.find()
+    .limit (limit)
+    .skip (offset)
+    .sort({
+      no: 1
+    })
+    .select('-__v');
   }
 
   /**
@@ -219,6 +229,10 @@ export class VideoGameService {
       }
       throw error;
     }
+  }
+
+  async deleteMany(filter: any) {
+    return this.videogameModel.deleteMany(filter);
   }
 
   private handleException(error: any) {
